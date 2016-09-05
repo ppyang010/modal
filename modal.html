@@ -5,14 +5,14 @@
 	<title>modal</title>
 	<link rel="stylesheet" type="text/css" href="./modal.css">
 	<link rel="stylesheet" type="text/css" href="./animate.css">
-	<script type="text/javascript" href="./animate.js"></script>
-
+	<script type="text/javascript" src="./animate.js"></script>
+  <script src='modal_base.js'></script>
 </head>
 <body>
 	<div>
-		<button>点击</buttn>
+		<button onclick="show()">点击</buttn>
 	</div>
-	<div class="modal" style="display: block">
+	<!-- <div class="modal" style="display: block">
 		<div class="modal-wrap">
 			<div class="modal-head">标题</div>
 			<div class="modal-body">主要内容</div>
@@ -21,26 +21,31 @@
 				<a class="cancel" href="#">取消</a>
 			</div>
 		</div>
-	</div>
+	</div> -->
+
 </body>
 <script type="text/javascript">
-/*	
-	var modal=new modal({
-		content:'hello world',
-		animate:{
-			enter:'bounceIn',
-			leave:'bounceOut'
-		},
-		onConfirm:function(){
+var modal=new Modal({
+  title:'hello',
+  content:'hello world',
+  animate:{
+    enter:'bounceIn',
+    leave:'bounceOut'
+  },
+  onConfirm:function(){
+    console.log('onConfirm');
+  },
+  onCancel:function(){
+    console.log('onCancel');
 
-		},
-		onCancel:function(){
+  }
 
-		}
+});
+function show() {
 
-	});*/
-/*
-	modal.show('hello world');
-	modal.hide();*/
+  modal.show('hello world');
+}
+// modal.hide();
 </script>
+
 </html>
