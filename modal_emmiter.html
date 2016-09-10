@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>modal</title>
+	<link rel="stylesheet" type="text/css" href="./modal.css">
+	<link rel="stylesheet" type="text/css" href="./animate.css">
+	<script type="text/javascript" src="./animate.js"></script>
+  <script src='modal_emitter.js'></script>
+</head>
+<body>
+	<div>
+		<button onclick="show()">点击</buttn>
+	</div>
+	<!-- <div class="modal" style="display: block">
+		<div class="modal-wrap">
+			<div class="modal-head">标题</div>
+			<div class="modal-body">主要内容</div>
+			<div class="modal-foot">
+				<a class="confirm" href="#">确认</a>
+				<a class="cancel" href="#">取消</a>
+			</div>
+		</div>
+	</div> -->
+
+</body>
+<script type="text/javascript">
+var modal=new Modal({
+  title:'hello',
+  content:'hello world',
+  animation:{
+    enter:'bounceIn',
+    leave:'bounceOut'
+  }
+	// ,
+  // onConfirm:function(){
+  //   console.log('onConfirm');
+  // },
+  // onCancel:function(){
+  //   console.log('onCancel');
+	//
+  // }
+
+});
+
+function show() {
+
+  modal.show('hello world');
+}
+
+modal.on('confirm',function(){
+	console.log("callback success");
+})
+// modal.hide();
+</script>
+
+</html>

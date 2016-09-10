@@ -1,4 +1,53 @@
+var emitter={
+    //注册事件
+    on:function(event,fn){
+      var handles=this._handles||(this._handles={}),
+      calls=handles[event]||(handles[event]=[]);
 
+      //入栈
+      calls.push(fn);
+      return this;
+    },
+    // 解绑事件
+    off:function (event,fn) {
+      if(!event||!this._handles) this._handles={};
+      if(!this._handles) return;
+
+      var handles=this._handles,calls;
+
+      if(calls=handles[event]){
+        //不带回调参数 进行清空
+        if(!fn){
+          handles[event]=[];
+          return this;
+        }
+
+        //找到并移除
+        for (var i=0,len=calls.length;i<len;i++){
+          if(fn===calls[i]){
+            calls.splice(i,1);
+            return this;
+          }
+        }
+      }
+    },
+    //触发指定事件
+    emit:function (event) {
+      var args=[].slice.call(arguments,1),
+      handles=this._handles,calls;
+
+      if(!handles || !(calls=handles[event]) ) return this;
+
+      //触发所有对应明智的listeners
+      for(var i=0,len=calls.length;i<len;i++){
+        calls[i].apply(this);
+      }
+      return this;
+
+
+    }
+
+}
 
 
 !function(){
@@ -30,7 +79,7 @@ function extend(o1,o2){
 //模板
 var template=
 '<div class="modal" style="display: block">\
-		<div class="modal-wrap">\
+		<div class="modal-wrap animated">\
 			<div class="modal-head">标题</div>\
 			<div class="modal-body">主要内容</div>\
 			<div class="modal-foot">\
@@ -53,6 +102,10 @@ function Modal(options){
 	//整个窗口
 	this.wrap=this.container.querySelector('.modal-wrap');
 
+
+  // 将options 复制到 组件实例上  同this.xx=options.xx  
+  extend(this, options);
+
   this._initEvent();
 }
 
@@ -60,20 +113,34 @@ function Modal(options){
 extend(Modal.prototype,{
   _layout:html2node(template),
   setContent:function(content,title){
+
     if(!!title){
       this.title.innerHTML=title;
     }
     if(!!content){
-      this.body.innerHTML=content;
+      if(content.nodeType===1){
+        this.body.innerHTML=0;
+        this.body.appendChild(content);
+      }else{
+        this.body.innerHTML=content;
+      }
     }
 
   },
+  //显示弹窗
   show:function(content,title){
     this.setContent(content,title);
     document.body.appendChild(this.container);
+    animateClass(this.wrap, this.animation.enter);
   },
+  //隐藏弹窗
   hide:function(){
-    document.body.removeChild(this.container);
+    //document.body.removeChild(this.container);
+    var container=this.container;//如果this要作为回调函数中使用 进行本地化
+
+    animateClass(this.wrap, this.animation.leave, function(){
+      document.body.removeChild(container);
+    })
   },
   _initEvent:function() {
     console.log(this);//modal
@@ -100,12 +167,12 @@ extend(Modal.prototype,{
 
   _onConfirm:function () {
     console.log(this);
-    this.options.onConfirm();
+    this.emit('confirm');
     this.hide();
   },
 
   _onCancel:function () {
-    this.options.onCancel();
+    this.emit('cancel');
     this.hide();
   }
 
@@ -113,6 +180,9 @@ extend(Modal.prototype,{
 
 
 });
+
+
+extend(Modal.prototype,emitter);
 
 console.dir(Modal);
 window.Modal=Modal;
